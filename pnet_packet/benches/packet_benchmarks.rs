@@ -7,13 +7,23 @@ use pnet_packet::ipv4::MutableIpv4Packet;
 use pnet_base::MacAddr;
 use pnet_packet::Packet;
 use pnet_packet::ipv4::Ipv4Packet;
+use pnet_packet::native::ethernet::Ethernet;
 
 
 fn bench_packet_new_constructor(c: &mut Criterion) {
     let buffer = vec![0; 20];
-    c.bench_function("EthernetPacket New Packet", |b| {
+    c.bench_function("EthernetPacket New Packet - Macro Contructor", |b| {
         b.iter(|| 
             EthernetPacket::new(black_box(&buffer)).unwrap()
+        );
+    });
+}
+
+fn bench_packet_new_native_constructor(c: &mut Criterion) {
+    let mut buffer = vec![0; 20];
+    c.bench_function("EthernetPacket New Packet - Native Constructor", |b| {
+        b.iter(|| 
+            Ethernet::new(black_box(&buffer)).unwrap()
         );
     });
 }
@@ -70,6 +80,6 @@ fn bench_ipv4_parsing(c: &mut Criterion) {
     });
 }
 
-criterion_group!(benches, bench_packet_new_constructor, bench_packet_get_source, bench_packet_set_source_black_box, bench_packet_mutable_to_immutable, bench_packet_immutable_to_immutable, bench_ipv4_parsing);
+criterion_group!(benches, bench_packet_new_constructor, bench_packet_new_native_constructor, bench_packet_get_source, bench_packet_set_source_black_box, bench_packet_mutable_to_immutable, bench_packet_immutable_to_immutable, bench_ipv4_parsing);
 
 criterion_main!(benches);

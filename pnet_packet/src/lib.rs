@@ -30,3 +30,7 @@ pub mod usbpcap;
 pub mod vlan;
 
 pub mod util;
+
+
+// New Portion of libraries that does native parsing without macro dependencies
+pub mod native;
