@@ -15,8 +15,24 @@ use crate::util::{
 use proc_macro2::{Group, Span};
 use quote::{quote, ToTokens};
 use regex::Regex;
+
+#[cfg(feature = "std")]
 use std::iter::FromIterator;
+
 use syn::{spanned::Spanned, Error};
+
+#[cfg(feature = "no_std")]
+extern crate alloc;
+#[cfg(feature = "no_std")]
+use alloc::{
+    vec::Vec,
+    boxed::Box,
+    string::ToString,
+    borrow::ToOwned,
+    string::String,
+};
+
+
 
 #[derive(Debug, PartialEq, Eq)]
 enum EndiannessSpecified {
@@ -1277,9 +1293,7 @@ fn handle_vector_field(
                     #[allow(trivial_numeric_casts)]
                     #[cfg_attr(feature = \"clippy\", allow(used_underscore_binding))]
                     pub fn get_{name}(&self) -> Vec<{inner_ty_str}> {{
-                        use pnet_macros_support::packet::FromPacket;
                         let _self = self;
-                        /*
                         let length = {packet_length};
                         let vec_length = length.saturating_div({inner_size});
                         let mut vec = Vec::with_capacity(vec_length);
@@ -1293,10 +1307,8 @@ fn handle_vector_field(
                             additional_offset += {inner_size};
                         }}
 
-                        vec;
-                        */
+                        vec
 
-                        &self.from_packet().{name}
                     }}
                     ",
                     accessors = accessors,

@@ -9,7 +9,18 @@
 
 //! Utility functions for bit manipulation operations
 
-use std::fmt;
+
+use core::fmt;
+
+#[cfg(feature = "no_std")]
+extern crate alloc;
+#[cfg(feature = "no_std")]
+#[allow(unused_imports)]
+use alloc::{
+    vec::Vec,
+    borrow::ToOwned,
+    string::{String, ToString},
+};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Endianness {
@@ -127,8 +138,14 @@ macro_rules! radix_fn {
         mod $name {
             #[test]
             fn test() {
+                #[cfg(feature = "std")]
                 assert_eq!(super::$name(0xab), "ab".to_owned());
+                #[cfg(feature = "std")]
                 assert_eq!(super::$name(0x1c), "1c".to_owned());
+                #[cfg(feature = "no_std")]
+                assert_eq!(super::$name(0xab), "ab".clone());
+                #[cfg(feature = "no_std")]
+                assert_eq!(super::$name(0x1c), "1c".clone());
             }
         }
     };

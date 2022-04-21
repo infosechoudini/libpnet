@@ -136,6 +136,7 @@
 //!        `#[construct_with(...)]` attribute, and in the `new` method.
 
 #![deny(missing_docs)]
+#![cfg_attr(not(feature = "std"), no_std)]
 // #![cfg_attr(feature = "clippy", feature(plugin))]
 // #![cfg_attr(feature = "clippy", plugin(clippy))]
 // #![cfg_attr(feature = "clippy", allow(let_and_return))]
@@ -143,6 +144,14 @@
 use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, DeriveInput, Visibility};
+
+#[cfg(feature = "no_std")]
+#[macro_use]
+extern crate alloc;
+#[cfg(feature = "no_std")]
+use alloc::{
+    string::ToString,
+};
 
 mod decorator;
 mod util;
