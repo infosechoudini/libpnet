@@ -10,7 +10,16 @@
 
 use crate::PrimitiveValues;
 
-use std::fmt;
+#[cfg(feature = "no_std")]
+extern crate alloc;
+#[allow(unused_imports)]
+#[cfg(feature = "no_std")]
+use alloc::{
+    format,
+    vec::Vec
+};
+
+use core::fmt;
 use pnet_base::MacAddr;
 use pnet_macros::packet;
 

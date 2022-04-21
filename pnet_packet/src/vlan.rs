@@ -1,5 +1,10 @@
 //! A VLAN packet abstraction.
 
+#[cfg(feature = "no_std")]
+extern crate alloc;
+#[cfg(feature = "no_std")]
+use alloc::vec::Vec;
+
 use crate::PrimitiveValues;
 use crate::ethernet::EtherType;
 use pnet_macros::packet;

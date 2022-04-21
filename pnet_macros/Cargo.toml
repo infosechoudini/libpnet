@@ -25,7 +25,7 @@ std = []
 alloc = []
 
 [dev-dependencies]
-pnet_macros_support = { path = "../pnet_macros_support", version = "0.30.0" , features = ["no_std", "std"] }
+pnet_macros_support = { path = "../pnet_macros_support", version = "0.30.0"  }
 trybuild = "1.0.42"
 
 [dependencies]

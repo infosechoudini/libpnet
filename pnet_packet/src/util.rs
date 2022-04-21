@@ -8,13 +8,24 @@
 
 //! Utilities for working with packets, eg. checksumming.
 
+#[cfg(feature = "no_std")]
+extern crate alloc;
+#[cfg(feature = "no_std")]
+#[allow(unused_imports)]
+use alloc::vec::Vec;
+
+#[cfg(feature = "no_std")]
+#[allow(unused_imports)]
+use alloc::*;
+
 use crate::ip::IpNextHeaderProtocol;
 use pnet_macros_support::types::u16be;
 
-use std::convert::TryInto;
-use std::net::{Ipv4Addr, Ipv6Addr};
-use std::u16;
-use std::u8;
+#[allow(unused_imports)]
+use core::convert::TryInto;
+use pnet_base::{Ipv4Addr, Ipv6Addr};
+
+
 
 /// Convert a value to a byte array.
 pub trait Octets {
@@ -183,8 +194,11 @@ fn sum_be_words(data: &[u8], skipword: usize) -> u32 {
 #[cfg(test)]
 mod tests {
     use super::sum_be_words;
-    use std::slice;
-
+    use core::slice;
+    #[cfg(feature = "no_std")]
+    use crate::util::Vec;
+    #[cfg(feature = "no_std")]
+    use crate::util::alloc::*;
     #[test]
     fn sum_be_words_different_skipwords() {
         let data = (0..11).collect::<Vec<u8>>();
@@ -240,6 +254,8 @@ mod tests {
 mod checksum_benchmarks {
     use super::checksum;
     use test::{black_box, Bencher};
+    #[cfg(feature = "no_std")]
+    use crate::util::alloc;
 
     #[bench]
     fn bench_checksum_small(b: &mut Bencher) {

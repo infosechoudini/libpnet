@@ -210,8 +210,7 @@ impl PrimitiveValues for pnet_base::MacAddr {
 }
 
 
-#[cfg(std)]
-impl PrimitiveValues for ::std::net::Ipv4Addr {
+impl PrimitiveValues for pnet_base::Ipv4Addr {
     type T = (u8, u8, u8, u8);
     #[inline]
     fn to_primitive_values(&self) -> (u8, u8, u8, u8) {
@@ -221,8 +220,7 @@ impl PrimitiveValues for ::std::net::Ipv4Addr {
     }
 }
 
-#[cfg(std)]
-impl PrimitiveValues for ::std::net::Ipv6Addr {
+impl PrimitiveValues for pnet_base::Ipv6Addr {
     type T = (u16, u16, u16, u16, u16, u16, u16, u16);
     #[inline]
     fn to_primitive_values(&self) -> (u16, u16, u16, u16, u16, u16, u16, u16) {

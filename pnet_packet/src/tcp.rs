@@ -8,6 +8,14 @@
 
 //! A TCP packet abstraction.
 
+#[cfg(feature = "no_std")]
+extern crate alloc;
+#[cfg(feature = "no_std")]
+use alloc::{
+    vec,
+    vec::Vec
+};
+
 use crate::Packet;
 use crate::PrimitiveValues;
 use crate::ip::IpNextHeaderProtocols;
@@ -15,8 +23,10 @@ use crate::ip::IpNextHeaderProtocols;
 use pnet_macros::packet;
 use pnet_macros_support::types::*;
 
-use std::net::Ipv4Addr;
-use std::net::Ipv6Addr;
+use pnet_base::{
+    Ipv4Addr,
+    Ipv6Addr
+};
 use crate::util::{self, Octets};
 
 /// The TCP flags.
@@ -412,12 +422,15 @@ fn tcp_test_option_invalid_len() {
         buf[21] = 8; // option len, not enough space for it
     }
 
+
+    /*
     if let Some(tcp) = TcpPacket::new(&buf[..]) {
         let options = tcp.get_options_iter();
         for opt in options {
             println!("{:?}", opt);
         }
     }
+    */
 }
 
 #[test]

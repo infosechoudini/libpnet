@@ -8,11 +8,21 @@
 
 //! An ICMPv6 packet abstraction.
 
+#[cfg(feature = "no_std")]
+extern crate alloc;
+#[allow(unused_imports)]
+#[cfg(feature = "no_std")]
+use alloc::{
+    format,
+    vec,
+    vec::Vec
+};
+
 use crate::ip::IpNextHeaderProtocols;
 use crate::PrimitiveValues;
 use pnet_macros::packet;
 use pnet_macros_support::types::*;
-use std::net::Ipv6Addr;
+use pnet_base::Ipv6Addr;
 
 /// Represents the "ICMPv6 type" header field.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -154,7 +164,12 @@ pub mod ndp {
     use crate::Packet;
     use pnet_macros::packet;
     use pnet_macros_support::types::*;
-    use std::net::Ipv6Addr;
+    use pnet_base::Ipv6Addr;
+
+    #[cfg(feature = "no_std")]
+    extern crate alloc;
+    #[cfg(feature = "no_std")]
+    use alloc::vec::Vec;
 
     #[allow(non_snake_case)]
     #[allow(non_upper_case_globals)]
@@ -189,6 +204,7 @@ pub mod ndp {
     #[allow(non_upper_case_globals)]
     pub mod NdpOptionTypes {
         use super::NdpOptionType;
+
 
         /// Source Link-Layer Address Option [RFC 4861 § 4.6.1]
         ///
@@ -564,6 +580,9 @@ pub mod ndp {
         use crate::icmpv6::{Icmpv6Types, Icmpv6Code};
         use super::*;
 
+        #[cfg(feature = "no_std")]
+        use alloc::vec;
+
         #[test]
         fn basic_option_parsing() {
             let mut data = vec![
@@ -844,6 +863,11 @@ pub mod echo_reply {
     use pnet_macros::packet;
     use pnet_macros_support::types::*;
 
+    #[cfg(feature = "no_std")]
+    extern crate alloc;
+    #[cfg(feature = "no_std")]
+    use alloc::vec::Vec;
+
     /// Represents the identifier field.
     #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
     pub struct Identifier(pub u16);
@@ -922,6 +946,11 @@ pub mod echo_request {
     use crate::icmpv6::{Icmpv6Code, Icmpv6Type};
     use pnet_macros::packet;
     use pnet_macros_support::types::*;
+
+    #[cfg(feature = "no_std")]
+    extern crate alloc;
+    #[cfg(feature = "no_std")]
+    use alloc::vec::Vec;
 
     /// Represents the identifier field.
     #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]

@@ -22,6 +22,10 @@ use alloc::{
     string::{String, ToString},
 };
 
+
+#[allow(unused_imports)]
+use core::convert::TryInto;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Endianness {
     Big,

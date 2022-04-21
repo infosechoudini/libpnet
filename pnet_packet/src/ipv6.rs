@@ -8,12 +8,22 @@
 
 //! An IPv6 packet abstraction.
 
+#[cfg(feature = "no_std")]
+extern crate alloc;
+#[allow(unused_imports)]
+#[cfg(feature = "no_std")]
+use alloc::{
+    vec,
+    format,
+    vec::Vec
+};
+
 use crate::ip::IpNextHeaderProtocol;
 
 use pnet_macros::packet;
 use pnet_macros_support::types::*;
 
-use std::net::Ipv6Addr;
+use pnet_base::Ipv6Addr;
 
 /// Represents an IPv6 Packet.
 #[packet]

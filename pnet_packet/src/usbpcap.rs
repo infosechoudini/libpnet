@@ -3,6 +3,14 @@ use pnet_macros::Packet;
 use pnet_macros_support::types::{u1, u3, u4, u7, u16le, u32le, u64le};
 use pnet_macros_support::packet::PrimitiveValues;
 
+#[cfg(feature = "no_std")]
+extern crate alloc;
+#[allow(unused_imports)]
+#[cfg(feature = "no_std")]
+use alloc::{
+    vec::Vec
+};
+
 /// Represents a USB PCAP function for the requested operation.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct UsbPcapFunction(pub u16);
@@ -111,7 +119,8 @@ mod tests {
             usbpcap.set_data_length(2);
             assert_eq!(usbpcap.get_data_length(), 2);
 
-            assert_eq!(usbpcap.get_header_payload(), &[]);
+            let null: &[u8] = &[];
+            assert_eq!(usbpcap.get_header_payload(), null);
 
             usbpcap.set_payload(&[90, 100]);
             assert_eq!(usbpcap.payload(), &[90, 100]);
@@ -146,7 +155,8 @@ mod tests {
             usbpcap.set_header_payload(&[110]);
             assert_eq!(usbpcap.get_header_payload(), &[110]);
 
-            assert_eq!(usbpcap.payload(), &[]);
+            let null: &[u8] = &[];
+            assert_eq!(usbpcap.payload(), null);
         }
 
         let ref_packet = [

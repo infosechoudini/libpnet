@@ -8,13 +8,23 @@
 
 //! An IPv4 packet abstraction.
 
+#[cfg(feature = "no_std")]
+extern crate alloc;
+#[allow(unused_imports)]
+#[cfg(feature = "no_std")]
+use alloc::{
+    vec,
+    format,
+    vec::Vec
+};
+
 use crate::PrimitiveValues;
 use crate::ip::IpNextHeaderProtocol;
 
 use pnet_macros::packet;
 use pnet_macros_support::types::*;
 
-use std::net::Ipv4Addr;
+use pnet_base::Ipv4Addr;
 
 /// The IPv4 header flags.
 #[allow(non_snake_case)]
@@ -379,7 +389,6 @@ fn ipv4_packet_option_test() {
                       0x03,           /* length */
                       0x10,           /* data */];
 
-    println!("{:?}", packet);
     assert_eq!(&ref_packet[..], &packet[..]);
 }
 

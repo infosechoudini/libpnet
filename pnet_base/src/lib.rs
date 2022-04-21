@@ -13,5 +13,7 @@ extern crate serde;
 
 mod macaddr;
 mod ip4addr;
+mod ip6addr;
 pub use crate::macaddr::*;
 pub use crate::ip4addr::*;
+pub use crate::ip6addr::*;

@@ -1,5 +1,11 @@
 //! A Linux cooked-mode capture (LINKTYPE_LINUX_SLL) packet abstraction.
 
+#[cfg(feature = "no_std")]
+extern crate alloc;
+#[cfg(feature = "no_std")]
+use alloc::vec::Vec;
+
+
 use ethernet::EtherType;
 use pnet_macros::packet;
 use pnet_macros_support::types::*

@@ -11,7 +11,12 @@
 use crate::PrimitiveValues;
 use crate::ethernet::EtherType;
 
-use std::net::Ipv4Addr;
+#[cfg(feature = "no_std")]
+extern crate alloc;
+#[cfg(feature = "no_std")]
+use alloc::vec::Vec;
+
+use pnet_base::Ipv4Addr;
 use pnet_base::MacAddr;
 use pnet_macros::packet;
 

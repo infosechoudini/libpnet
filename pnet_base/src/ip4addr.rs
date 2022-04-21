@@ -23,9 +23,12 @@ impl Ipv4Addr {
     pub fn zero() -> Ipv4Addr {
         Default::default()
     }
+
+    /// Returns the 4 eight-bit integers that make up this address
+    pub fn octets(&self) -> [u8; 4] {
+        [self.0, self.1, self.2, self.3]
+    }
 }
-
-
 
 impl From<IPAddrv4> for Ipv4Addr {
     #[inline(always)]

@@ -8,6 +8,15 @@
 
 //! An ICMP packet abstraction.
 
+#[cfg(feature = "no_std")]
+extern crate alloc;
+#[allow(unused_imports)]
+#[cfg(feature = "no_std")]
+use alloc::{
+    format,
+    vec::Vec
+};
+
 use crate::PrimitiveValues;
 use pnet_macros::packet;
 use pnet_macros_support::types::*;
@@ -164,6 +173,11 @@ pub mod echo_reply {
     use pnet_macros::packet;
     use pnet_macros_support::types::*;
 
+    #[cfg(feature = "no_std")]
+    extern crate alloc;
+    #[cfg(feature = "no_std")]
+    use alloc::vec::Vec;
+
     /// Represent the "identifier" field of the ICMP echo replay header.
     #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
     pub struct Identifier(pub u16);
@@ -243,6 +257,11 @@ pub mod echo_request {
     use pnet_macros::packet;
     use pnet_macros_support::types::*;
 
+    #[cfg(feature = "no_std")]
+    extern crate alloc;
+    #[cfg(feature = "no_std")]
+    use alloc::vec::Vec;
+
     /// Represents the identifier field.
     #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
     pub struct Identifier(pub u16);
@@ -321,6 +340,11 @@ pub mod destination_unreachable {
     use pnet_macros::packet;
     use pnet_macros_support::types::*;
 
+    #[cfg(feature = "no_std")]
+    extern crate alloc;
+    #[cfg(feature = "no_std")]
+    use alloc::vec::Vec;
+
     /// Enumeration of the recognized ICMP codes for "destination unreachable" ICMP packets.
     #[allow(non_snake_case)]
     #[allow(non_upper_case_globals)]
@@ -392,6 +416,10 @@ pub mod time_exceeded {
     use pnet_macros::packet;
     use pnet_macros_support::types::*;
 
+    #[cfg(feature = "no_std")]
+    extern crate alloc;
+    #[cfg(feature = "no_std")]
+    use alloc::vec::Vec;
     /// Enumeration of the recognized ICMP codes for "time exceeded" ICMP packets.
     #[allow(non_snake_case)]
     #[allow(non_upper_case_globals)]

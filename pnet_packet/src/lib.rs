@@ -8,11 +8,15 @@
 
 //! Provides interfaces for interacting with packets and headers.
 #![allow(missing_docs)]
-#![macro_use]
+#![cfg_attr(not(feature = "std"), no_std)]
 
+
+#![macro_use]
 extern crate pnet_base;
 extern crate pnet_macros_support;
 extern crate pnet_macros;
+#[cfg(feature = "no_std")]
+extern crate alloc;
 
 pub use pnet_macros_support::packet::*;
 
