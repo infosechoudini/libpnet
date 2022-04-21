@@ -11,6 +11,12 @@ keywords = ["networking", "ethernet"]
 categories = ["network-programming"]
 edition = "2021"
 
+[features]
+default = ["std"]
+no_std = ["alloc"]
+alloc = []
+std = []
+
 [dependencies]
 serde = { version = "1.0.126", optional = true, default-features = false }
 

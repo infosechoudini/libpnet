@@ -6,9 +6,26 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+
+// alloc is used in place for no_std
+// must import * due to format! macro
+#[cfg(feature = "no_std")]
+extern crate alloc;
+#[cfg(feature = "no_std")]
+use alloc::*;
+
+
+// Replaced std with core to support no_std implementation
+use core::{
+    str::FromStr,
+    fmt,
+};
+
+// Import of Error from std crate to support Trait for ParseMacAddrErr
+#[cfg(feature = "std")]
 use std::error::Error;
-use std::fmt;
-use std::str::FromStr;
+
+
 
 #[cfg(feature = "serde")]
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
@@ -180,7 +197,7 @@ impl fmt::Debug for MacAddr {
 }
 
 /// Represents an error which occurred whilst parsing a MAC address.
-#[derive(Copy, Debug, PartialEq, Eq, Clone)]
+#[derive( Copy,  PartialEq,  Eq,  Clone, fmt::Debug)]
 pub enum ParseMacAddrErr {
     /// The MAC address has too many components, eg. 00:11:22:33:44:55:66.
     TooManyComponents,
@@ -190,7 +207,11 @@ pub enum ParseMacAddrErr {
     InvalidComponent,
 }
 
+
+// Error trait is only support via std 
+#[cfg(feature = "std")]
 impl Error for ParseMacAddrErr {}
+
 
 impl ParseMacAddrErr {
     fn description(&self) -> &str {
