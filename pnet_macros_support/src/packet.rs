@@ -8,8 +8,16 @@
 
 //! Packet helpers for `pnet_macros`.
 
+
 use pnet_base;
+// Changed from STD::* to CORE::* to avoid conflice with no_std feature
 use core::ops::{Deref, DerefMut, Index, IndexMut, Range, RangeFrom, RangeFull, RangeTo};
+
+#[cfg(feature = "no_std")]
+extern crate alloc;
+#[cfg(feature = "no_std")]
+use alloc::boxed::Box;
+
 
 /// Represents a generic network packet.
 pub trait Packet {
@@ -86,7 +94,7 @@ macro_rules! impl_index_mut {
 
 /// Packet data.
 #[derive(PartialEq)]
-#[cfg(std)]
+#[cfg(feature = "std")]
 pub enum PacketData<'p> {
     /// A packet owns its contents.
     Owned(Vec<u8>),
@@ -96,10 +104,10 @@ pub enum PacketData<'p> {
 
 /// Packet data.
 #[derive(PartialEq)]
-#[cfg(not(std))]
+#[cfg(feature = "no_std")]
 pub enum PacketData<'p> {
     /// A packet owns its contents.
-    Owned(Vec<u8>),
+    Owned(Box<[u8]>),
     /// A packet borrows its contents.
     Borrowed(&'p [u8]),
 }
@@ -136,10 +144,23 @@ impl_index!(PacketData, RangeFrom<usize>, [u8]);
 impl_index!(PacketData, RangeFull, [u8]);
 
 /// Mutable packet data.
+#[cfg(feature = "std")]
 #[derive(PartialEq)]
 pub enum MutPacketData<'p> {
     /// Owned mutable packet data.
     Owned(Vec<u8>),
+    /// Borrowed mutable packet data.
+    Borrowed(&'p mut [u8]),
+}
+
+
+
+/// Mutable packet data as no_std
+#[cfg(feature = "no_std")]
+#[derive(PartialEq)]
+pub enum MutPacketData<'p> {
+    /// Owned mutable packet data.
+    Owned(Box<[u8]>),
     /// Borrowed mutable packet data.
     Borrowed(&'p mut [u8]),
 }
