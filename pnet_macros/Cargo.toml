@@ -19,7 +19,7 @@ proc-macro = true
 
 [features]
 travis = []
-default = ["no_std"]
+default = ["std"]
 no_std = ["alloc", "pnet_macros_support/no_std"]
 std = []
 alloc = []
