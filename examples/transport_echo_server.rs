@@ -16,6 +16,8 @@ use pnet::transport::TransportChannelType::Layer4;
 use pnet::transport::TransportProtocol::Ipv4;
 use pnet::transport::{transport_channel, udp_packet_iter};
 
+
+#[cfg(not(feature = "no_std"))]
 fn main() {
     let protocol = Layer4(Ipv4(IpNextHeaderProtocols::Test1));
 

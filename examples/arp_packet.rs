@@ -1,3 +1,4 @@
+
 extern crate pnet;
 
 use std::env;
@@ -67,6 +68,8 @@ fn get_mac_through_arp(interface: NetworkInterface, target_ip: Ipv4Addr) -> MacA
     arp.get_sender_hw_addr()
 }
 
+
+#[cfg(not(feature = "no_std"))]
 fn main() {
     let mut args = env::args().skip(1);
     let iface_name = match args.next() {

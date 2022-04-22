@@ -9,6 +9,8 @@
 /// This examples simply print all interfaces to stdout
 extern crate pnet_datalink;
 
+
+#[cfg(not(feature = "no_std"))]
 fn main() {
     for interface in pnet_datalink::interfaces() {
         println!("{}", interface);

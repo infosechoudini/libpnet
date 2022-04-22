@@ -1,3 +1,14 @@
+// Replaced std with core to support no_std implementation
+use core::{
+    str::FromStr,
+    fmt,
+};
+
+// Import of Error from std crate to support Trait for ParseMacAddrErr
+#[cfg(feature = "std")]
+use std::error::Error;
+
+
 
 /// The number of bytes in an ethernet (Ipv4) address.
 pub const IPV6_ADDR_LEN: usize = 8;
@@ -64,5 +75,67 @@ impl core::fmt::Display for Ipv6Addr {
 impl core::fmt::Debug for Ipv6Addr {
     fn fmt(&self, fmt: &mut core::fmt::Formatter) -> core::fmt::Result {
         core::fmt::Display::fmt(self, fmt)
+    }
+}
+
+
+/// Represents an error which occurred whilst parsing a MAC address.
+#[derive( Copy,  PartialEq,  Eq,  Clone, fmt::Debug)]
+pub enum ParseIpv6AddrErr {
+    /// The IP address has too many components, eg. 192.168.1.1.1
+    TooManyComponents,
+    /// The IP address has too few components, eg. 192.168
+    TooFewComponents,
+    /// One of the components contains an invalid value, eg. 192.168.2x.22
+    InvalidComponent,
+}
+
+// Error trait is only support via std 
+#[cfg(feature = "std")]
+impl Error for ParseIpv6AddrErr {}
+
+
+impl ParseIpv6AddrErr {
+    fn description(&self) -> &str {
+        match *self {
+            ParseIpv6AddrErr::TooManyComponents => "Too many components in a MAC address string",
+            ParseIpv6AddrErr::TooFewComponents => "Too few components in a MAC address string",
+            ParseIpv6AddrErr::InvalidComponent => "Invalid component in a MAC address string",
+        }
+    }
+}
+
+impl fmt::Display for ParseIpv6AddrErr {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.description())
+    }
+}
+
+
+impl FromStr for Ipv6Addr {
+    type Err = ParseIpv6AddrErr;
+    #[inline]
+    fn from_str(s: &str) -> Result<Ipv6Addr, ParseIpv6AddrErr> {
+        let mut parts = [0u16; 8];
+        let splits = s.split('.');
+        let mut i = 0;
+        for split in splits {
+            if i == 8 {
+                return Err(ParseIpv6AddrErr::TooManyComponents);
+            }
+            match u16::from_str_radix(split, 64) {
+                Ok(b) if split.len() != 0 => parts[i] = b,
+                _ => return Err(ParseIpv6AddrErr::InvalidComponent),
+            }
+            i += 1;
+        }
+
+        if i == 4 {
+            Ok(Ipv6Addr(
+                parts[0], parts[1], parts[2], parts[3], parts[4], parts[5], parts[6], parts[7]
+            ))
+        } else {
+            Err(ParseIpv6AddrErr::TooFewComponents)
+        }
     }
 }

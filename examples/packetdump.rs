@@ -22,10 +22,10 @@ use pnet::packet::tcp::TcpPacket;
 use pnet::packet::udp::UdpPacket;
 use pnet::packet::Packet;
 use pnet::util::MacAddr;
+use pnet_base::IpAddr;
 
 use std::env;
 use std::io::{self, Write};
-use std::net::IpAddr;
 use std::process;
 
 fn handle_udp_packet(interface_name: &str, source: IpAddr, destination: IpAddr, packet: &[u8]) {

@@ -9,8 +9,12 @@
 /// This example shows simple packet_fanout processing under linux.
 /// PACKET_FANOUT in linux allows to offload packet processing to multiple threads.
 /// See [man 7 packet](http://man7.org/linux/man-pages/man7/packet.7.html) for more details.
+
+
 extern crate pnet;
 extern crate pnet_datalink;
+
+
 
 use std::io::{self, Write};
 use std::process;
@@ -21,6 +25,7 @@ fn main() {
     process::exit(1);
 }
 
+#[cfg(not(feature = "no_std"))]
 #[cfg(target_os = "linux")]
 fn main() {
     use pnet::datalink::Channel::Ethernet;
