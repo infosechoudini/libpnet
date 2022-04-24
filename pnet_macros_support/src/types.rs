@@ -20,7 +20,8 @@
 
 #![allow(non_camel_case_types)]
 
-// TODO signed equivalents?
+// TODO: signed equivalents?
+// ? Should we use convert macros?
 
 /// Represents an unsigned, 1-bit integer.
 pub type u1 = u8;

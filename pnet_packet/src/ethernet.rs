@@ -8,21 +8,27 @@
 
 //! An ethernet packet abstraction.
 
-use crate::PrimitiveValues;
-
+// * External Imports
 use std::fmt;
+
+// * Internal Imports
+use crate::PrimitiveValues;
 use pnet_base::MacAddr;
 use pnet_macros::packet;
 
 /// Represents an Ethernet packet.
 #[packet]
 pub struct Ethernet {
+    // The destination MAC address
     #[construct_with(u8, u8, u8, u8, u8, u8)]
     pub destination: MacAddr,
+    // The source MAC address
     #[construct_with(u8, u8, u8, u8, u8, u8)]
     pub source: MacAddr,
+    // The type of the payload
     #[construct_with(u16)]
     pub ethertype: EtherType,
+    // The payload of the Ethernet Packet
     #[payload]
     pub payload: Vec<u8>,
 }
@@ -55,7 +61,7 @@ fn ethernet_header_test() {
 /// <http://www.iana.org/assignments/ieee-802-numbers/ieee-802-numbers.xhtml>.
 /// These values should be used in the `Ethernet` `EtherType` field.
 ///
-/// FIXME Should include all
+/// TODO: Should include all
 /// A handful of these have been selected since most are archaic and unused.
 #[allow(non_snake_case)]
 #[allow(non_upper_case_globals)]
@@ -110,7 +116,8 @@ pub mod EtherTypes {
     pub const QinQ: EtherType = EtherType(0x9100);
 }
 
-/// Represents the `Ethernet::ethertype` field.
+/// Represents the `Ethernet::ethertype` field
+/// Ethertypes designates the network layer protocol
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct EtherType(pub u16);
 
@@ -122,6 +129,7 @@ impl EtherType {
     }
 }
 
+// Converts the 2 bytes packet representation into a `EtherType`
 impl PrimitiveValues for EtherType {
     type T = (u16,);
     #[inline]
@@ -130,6 +138,8 @@ impl PrimitiveValues for EtherType {
     }
 }
 
+
+// Allows EtherType to be converted for string formatting in debug statements
 impl fmt::Display for EtherType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f,

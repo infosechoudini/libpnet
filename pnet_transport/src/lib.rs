@@ -18,7 +18,17 @@
 
 #![macro_use]
 
+// External Imports
 extern crate libc;
+use std::io;
+use std::io::Error;
+use std::io::ErrorKind;
+use std::mem;
+use std::net::{self, IpAddr};
+use std::sync::Arc;
+use std::time::Duration;
+
+// PNET imports
 extern crate pnet_packet;
 extern crate pnet_sys;
 
@@ -32,13 +42,7 @@ use pnet_packet::tcp::TcpPacket;
 use pnet_packet::udp::UdpPacket;
 use pnet_packet::Packet;
 
-use std::io;
-use std::io::Error;
-use std::io::ErrorKind;
-use std::mem;
-use std::net::{self, IpAddr};
-use std::sync::Arc;
-use std::time::Duration;
+
 
 /// Represents a transport layer protocol.
 #[derive(Clone, Copy)]
@@ -92,7 +96,7 @@ pub fn transport_channel(
     buffer_size: usize,
     channel_type: TransportChannelType,
 ) -> io::Result<(TransportSender, TransportReceiver)> {
-    // This hack makes sure that winsock is initialised
+    // This hack makes sure that winsock is initialized
     let _ = {
         let ip = net::Ipv4Addr::new(255, 255, 255, 255);
         let sockaddr = net::SocketAddr::V4(net::SocketAddrV4::new(ip, 0));

@@ -9,14 +9,19 @@
 
 //! Implements the #\[packet\] decorator.
 
-use crate::util::{
-    operations, to_little_endian, to_mutator, Endianness, GetOperation, SetOperation,
-};
+
+// * External Imports
 use proc_macro2::{Group, Span};
 use quote::{quote, ToTokens};
 use regex::Regex;
 use std::iter::FromIterator;
 use syn::{spanned::Spanned, Error};
+
+// * Internal Imports
+use crate::util::{
+    operations, to_little_endian, to_mutator, Endianness, GetOperation, SetOperation,
+};
+
 
 #[derive(Debug, PartialEq, Eq)]
 enum EndiannessSpecified {
@@ -41,6 +46,7 @@ enum Type {
     Misc(String),
 }
 
+// Struct field used for macros
 #[derive(Clone, Debug)]
 struct Field {
     name: String,
@@ -52,18 +58,24 @@ struct Field {
     construct_with: Option<Vec<Type>>,
 }
 
+// Packet struct used for macros
+// Holds base name from pnet_packet
+// and fields
 #[derive(Clone, Debug)]
 pub struct Packet {
     base_name: String,
     fields: Vec<Field>,
 }
 
+// Implementation for Packet macro
 impl Packet {
+    // Constructs mutable packet name from Packet.base_name
     #[inline]
     fn packet_name_mut(&self) -> String {
         format!("Mutable{}Packet", self.base_name)
     }
 
+    // Constructs packet name with base_name from Packet.base_name
     #[inline]
     fn packet_name(&self) -> String {
         format!("{}Packet", self.base_name)
@@ -71,17 +83,32 @@ impl Packet {
 
 }
 
+
+// Generates the code for the packet structs from pnet_packet for protocols defined
 #[inline]
 pub fn generate_packet(
     s: &syn::DataStruct,
     name: String,
 ) -> Result<proc_macro2::TokenStream, Error> {
+
+    // Constructs the packet struct
     let packet = make_packet(s, name)?;
+
+    // Constructs the mutable packet struct and immutable packet struct
     let structs = generate_packet_struct(&packet);
+
+    // Constructs the packet implementations for both types of packet structs
     let (ts_packet_impls, payload_bounds, packet_size) = generate_packet_impls(&packet)?;
+
+    // Constructs the packet size implementations for both types of packet structs
     let ts_size_impls = generate_packet_size_impls(&packet, &packet_size)?;
+
+    // Constructs the packet traits for both types of packet structs
     let ts_trait_impls = generate_packet_trait_impls(&packet, &payload_bounds)?;
+
+    // Constructs the packet iterators for both types of packet structs
     let ts_iterables = generate_iterables(&packet)?;
+
     let ts_converters = generate_converters(&packet)?;
     let ts_debug_impls = generate_debug_impls(&packet)?;
     let tts = quote! {
@@ -96,17 +123,29 @@ pub fn generate_packet(
     Ok(tts)
 }
 
+
+// Takes Packet struct with base_name and fields
+// Creates PacketData and MutablePacketData structs
 #[inline]
 fn generate_packet_struct(packet: &Packet) -> proc_macro2::TokenStream {
+
+    // Creates slice of fields for the packet struct names
+    // This includes the packet name for mutable and immutable packet structs
     let items = &[
         (packet.packet_name(), "PacketData"),
         (packet.packet_name_mut(), "MutPacketData"),
     ];
+
+    // Iterates over the items and creates the structs
     let tts: Vec<_> = items
         .iter()
         .map(|(name, packet_data)| {
+            // Parses name token
             let name = syn::Ident::new(&name, Span::call_site());
+
+            // Parses fields for the packet struct
             let packet_data = syn::Ident::new(packet_data, Span::call_site());
+
             quote! {
                 #[derive(PartialEq)]
                 /// A structure enabling manipulation of on the wire packets
@@ -121,8 +160,13 @@ fn generate_packet_struct(packet: &Packet) -> proc_macro2::TokenStream {
     }
 }
 
+
+// Constructs types for the fields of the packet structs
+// Takes Type String (ty_str) and the bool of whether endianness is specified
 #[inline]
 fn make_type(ty_str: String, endianness_important: bool) -> Result<Type, String> {
+
+    // Parses the type string into tuple of (size, endianness, endianness_specified)
     if let Some((size, endianness, spec)) = parse_ty(&ty_str[..]) {
         if !endianness_important || size <= 8 || spec == EndiannessSpecified::Yes {
             Ok(Type::Primitive(ty_str, size, endianness))
@@ -145,6 +189,8 @@ fn make_type(ty_str: String, endianness_important: bool) -> Result<Type, String>
     }
 }
 
+
+// Constructs the Packet struct
 #[inline]
 fn make_packet(s: &syn::DataStruct, name: String) -> Result<Packet, Error> {
     let mut fields = Vec::new();

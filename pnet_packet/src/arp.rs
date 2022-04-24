@@ -6,12 +6,14 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-//! ARP packet abstraction.
+//! ARP packet abstraction
 
+// * External Imports
+use std::net::Ipv4Addr;
+
+// * Internal imports
 use crate::PrimitiveValues;
 use crate::ethernet::EtherType;
-
-use std::net::Ipv4Addr;
 use pnet_base::MacAddr;
 use pnet_macros::packet;
 
@@ -98,6 +100,7 @@ pub struct Arp {
     pub target_hw_addr: MacAddr,
     #[construct_with(u8, u8, u8, u8)]
     pub target_proto_addr: Ipv4Addr,
+    // Set payload to zero to indicate that the payload is not present in the packet
     #[payload]
     #[length = "0"]
     pub payload: Vec<u8>,

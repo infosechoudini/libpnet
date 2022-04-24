@@ -8,8 +8,12 @@
 
 //! Packet helpers for `pnet_macros`.
 
-use pnet_base;
+// * External Imports
+// **  Using core vs std allows for conversion to no_std for the future
 use core::ops::{Deref, DerefMut, Index, IndexMut, Range, RangeFrom, RangeFull, RangeTo};
+
+// * Internal Imports
+use pnet_base;
 
 /// Represents a generic network packet.
 pub trait Packet {
@@ -23,10 +27,10 @@ pub trait Packet {
 
 /// Represents a generic, mutable, network packet.
 pub trait MutablePacket: Packet {
-    /// Retreive the underlying, mutable, buffer for the packet.
+    /// Retrieve the underlying, mutable, buffer for the packet.
     fn packet_mut(&mut self) -> &mut [u8];
 
-    /// Retreive the mutable payload for the packet.
+    /// Retrieve the mutable payload for the packet.
     fn payload_mut(&mut self) -> &mut [u8];
 
     /// Initialize this packet by cloning another.
@@ -60,11 +64,12 @@ pub trait PacketSize: Packet {
     fn packet_size(&self) -> usize;
 }
 
+
+// Allows indexing of a packet.
 macro_rules! impl_index {
     ($t:ident, $index_t:ty, $output_t:ty) => {
         impl<'p> Index<$index_t> for $t<'p> {
             type Output = $output_t;
-
             #[inline]
             fn index(&self, index: $index_t) -> &$output_t {
                 &self.as_slice().index(index)
@@ -73,6 +78,7 @@ macro_rules! impl_index {
     };
 }
 
+// Allows indexing of a mutable packet.
 macro_rules! impl_index_mut {
     ($t:ident, $index_t:ty, $output_t:ty) => {
         impl<'p> IndexMut<$index_t> for $t<'p> {
@@ -93,6 +99,7 @@ pub enum PacketData<'p> {
     Borrowed(&'p [u8]),
 }
 
+/// Implementations of `PacketData` for `Packet`
 impl<'p> PacketData<'p> {
 
     /// Get a slice of the packet data.
@@ -133,6 +140,7 @@ pub enum MutPacketData<'p> {
     Borrowed(&'p mut [u8]),
 }
 
+/// Implementations of `MutPacketData` for `MutablePacket`
 impl<'p> MutPacketData<'p> {
     /// Get packet data as a slice.
     #[inline]
@@ -189,7 +197,7 @@ pub trait PrimitiveValues {
     fn to_primitive_values(&self) -> Self::T;
 }
 
-
+// Used to convert MacAddr to a tuple of u8s
 impl PrimitiveValues for pnet_base::MacAddr {
     type T = (u8, u8, u8, u8, u8, u8);
     #[inline]
@@ -198,21 +206,28 @@ impl PrimitiveValues for pnet_base::MacAddr {
     }
 }
 
-
+// Used to convert IpAddrV4 to a tuple of u8s
 impl PrimitiveValues for ::std::net::Ipv4Addr {
     type T = (u8, u8, u8, u8);
     #[inline]
     fn to_primitive_values(&self) -> (u8, u8, u8, u8) {
+
+        // octets() is a method of Ipv4Addr that 
+        // returns a slice of u8s representing the address.
         let octets = self.octets();
 
         (octets[0], octets[1], octets[2], octets[3])
     }
 }
 
+// Used to convert IpAddrV6 to a tuple of u8s
 impl PrimitiveValues for ::std::net::Ipv6Addr {
     type T = (u16, u16, u16, u16, u16, u16, u16, u16);
     #[inline]
     fn to_primitive_values(&self) -> (u16, u16, u16, u16, u16, u16, u16, u16) {
+
+        // segments() is a method of std::net::Ipv6Addr 
+        // returns a slice of u16s representing the address.
         let segments = self.segments();
 
         (
